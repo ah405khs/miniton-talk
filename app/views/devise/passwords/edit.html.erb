@@ -1,0 +1,42 @@
+<style>
+  label {
+    color: #fff;
+    
+  }
+  em{
+    color: #d9d9d9;
+  }
+</style>
+<div class="container">
+  <div class="row" style="margin-top: 150px;">
+    <div class="col-md-4 col-md-offset-4">
+      <div class="devise_title" style="color: #fff;">
+        <h2>비밀번호 변경하기</h2>
+        <br/>
+      </div>
+        <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+          <%= devise_error_messages! %>
+          <%= f.hidden_field :reset_password_token %>
+        
+          <div class="field form-group">
+            <%= f.label :password, "New password" %><br />
+            <% if @minimum_password_length %>
+              <em>(<%= @minimum_password_length %> characters minimum)</em><br />
+            <% end %>
+            <%= f.password_field :password, autofocus: true, autocomplete: "off", class:"form-control" %>
+          </div>
+        
+          <div class="field form-group">
+            <%= f.label :password_confirmation, "Confirm new password" %><br />
+            <%= f.password_field :password_confirmation, autocomplete: "off", class:"form-control" %>
+          </div>
+        
+          <div class="actions">
+            <%= f.submit "Change my password", class:"btn btn-primary" %>
+          </div>
+        <% end %>
+        
+        <span style="float: right;"><%= render "devise/shared/links" %></span>
+    </div>
+  </div>
+</div>

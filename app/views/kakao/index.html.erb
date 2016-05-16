@@ -1,0 +1,278 @@
+<nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <% if user_signed_in? %><!--로그인 했다면-->
+                <a class="navbar-brand page-scroll" href="#page-top"><%= current_user.school %>&nbsp;<%= current_user.name %></a>
+            <% end %>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <% if user_signed_in? %><!--로그인 했다면-->                     
+                    <li>
+                            <a class="page-scroll" href="/users/sign_out">로그아웃</a>
+                    </li> 
+                <% end %>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+</nav>
+
+<div class="brand"><img src="/likelion_logo_white.png"><br>Miniton Liontalk</div>
+<hr>
+<div class="address-bar">서울과기대 | 동덕여대 | 성신여대 | 한성대</div>
+
+<div class="container" id="clock">
+    <div class="row">
+        <span class="clock"></span>
+    </div>
+</div>
+
+<div class="container">
+      <!--둘러싼 row-->
+      <div class="row">
+            <!--잡담 채팅창-->
+            <div class="col-md-offset-3 col-md-6 col-md-offset-3">
+            <div class="chat_category">
+                <span class="glyphicon glyphicon-chevron-down"  aria-hidden="true"></span>
+                자유 및 질문게시판<p>해커톤과 관련한 이야기들을 이야기해보세요!</p>
+            </div>
+
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                        <!--작성 폼-->
+                        <div class="row">
+                            <div class="col-md-1">
+                                <img class=".top-timeline-tweet-box-user-image size32" src="/likelion_logo.png">
+                            </div> 
+                            
+                            <div class="col-md-11">
+                                  <div class="wrap">
+                            
+                                      <textarea class="form-control" id="chat_content"
+                                      onKeyUp="javascript:fnChkByte(this,'140')" placeholder="무슨 생각을 하고 계신가요?"></textarea>
+                
+                                      <div class="clear"></div>
+                                      <div class="row">
+                                          <div class="col-md-4">
+                                              <span id="byteInfo">0</span>/140
+                                          </div>                                      
+                                          <div class="col-md-2 col-md-offset-6">
+                                              <button class= "btn btn-primary" type="submit" id="submit_talk" style="margin-top: 5px;">전송</button>
+                                          </div>
+                                      </div>
+                                  </div>
+                            </div>
+                        </div><!--//작성 폼-->
+                        </div><!--//panel-body-->
+                    </div><!--//panel-->
+                </div><!--//row-->  
+                <!--대화 리스트-->
+                <div class="row" id="chat_list">
+                    <% @posts.each do |post| %>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="post_info">
+                                <span class="post_num">#<%= post.id %></span>
+                                <span class="post_created_at"><%= distance_of_time_in_words_to_now(post.created_at)%></span>
+                            </div>
+                                <p><%= post.content %></p>
+                            <div class="post_info2">
+                                <img src="/likelion_logo.png"/>
+                                <span class="post_writer"><%= post.user.school %>&nbsp;<%= post.user.name %></span>
+                            </div>
+                        </div>
+                         <div class="panel-footer">
+                            <!--댓글 폼-->
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <img class=".top-timeline-tweet-box-user-image size32" src="/likelion_logo.png">
+                                </div> 
+                                
+                                <div class="col-md-11">
+                    					<input class="comment_content" id="comment_content<%=post.id%>" type="text" placeholder="댓글을 입력하세요..." >
+                    					<button type="submit" class="btn btn-primary submit_comment" value="<%=post.id%>">전송</button>   
+                                </div>
+                            </div><!--//댓글 폼-->  
+                         </div>         
+                        <!-- List group -->
+                        <ul class="list-group" id="comment_list<%= post.id %>">
+                            <% post.comments.each do |comment| %>
+                                <li class="list-group-item">
+                                        <%=comment.user.school%>&nbsp;<%=comment.user.name%>
+                                        <br>  
+                                        <span style="font-size: 18px;"><%=comment.content%>&nbsp;</span>
+                                        <span style="color: #b3b3b3;">-&nbsp;<%= distance_of_time_in_words_to_now(comment.created_at)%></span>                    
+                                        <% if comment.user == current_user %>
+                                            <form action="/kakao/comment_delete/<%= comment.id %>" method="GET">
+                                                <input type="hidden" value="<%= comment.id %>">
+                                                <button type="submit" class="btn btn-danger btn-xs" >삭제</button>
+                                            </form>
+                                        <% end %>
+                                </li>
+                            <% end %>
+                        </ul>
+                    </div>
+                    <% end %><!--//대화 리스트-->
+                </div>
+            </div><!--//잡담 채팅창-->
+          
+        <!--질문 채팅창은 만들어서 여기에 복붙 일단 시계-->
+        
+      </div><!--//둘러싼 row-->  
+    </div><!--/container-->
+    <!--footer-->
+    <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <p>Copyright &copy;
+                            <a href="http://sungshin.likelion.net" target="_new">&nbsp;likelion x sungshin&nbsp;</a>2016<br>
+                            <span>created by Woori Ahn</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+    </footer><!--//footer-->
+
+<script>
+  $(function(){
+    //alert("hello");
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('0f22bffddc41a8a18d1c', {
+      encrypted: true //암호화 자동화
+    });
+    var channel = pusher.subscribe('test_channel');
+    channel.bind('my_event', function(data) {
+        var txt = 
+        "<div class='panel panel-default'>" +
+            "<div class='panel-body'>" +
+                "<div class='post_info'>" +
+                    "<span class='post_num'>#"+data.id+"</span>" +
+                    "<span class='post_created_at'><%= distance_of_time_in_words_to_now(Time.current)%></span>" +
+                "</div>" +
+                    "<p>"+data.content+"</p>" +
+                "<div class='post_info2'>" +
+                    "<img src='/likelion_logo.png'/>" +
+                    "<span class='post_writer'>"+data.school+"&nbsp;"+data.writer+"</span>"+ 
+                "</div>" +
+            "</div>" +
+             "<div class='panel-footer'>" +
+                "<!--댓글 폼-->" +
+                "<div class='row'>" +
+                    "<div class='col-md-1'>" +
+                        "<img class='.top-timeline-tweet-box-user-image size32' src='/likelion_logo.png'>" +
+                    "</div>" + 
+                    
+                    "<div class='col-md-11'>" +
+        					"<input class='comment_content' id='comment_content"+data.id+"' type='text' placeholder='댓글을 입력하세요...'>" +
+        					"<button type='submit' class='btn btn-primary submit_comment' value='"+data.id+"'>전송</button>" +   
+                    "</div>" +
+                "</div><!--//댓글 폼-->" +  
+             "</div>" +         
+            "<!-- List group -->" +
+            "<ul class='list-group' id='comment_list"+data.id+"'>" 
+            
+            "</ul>" +
+        "</div>";
+        
+        
+        $("#chat_list").prepend(txt); //리스트에 추가하기
+    });
+    
+    
+    //게시글 달기
+    $("#submit_talk").click(function(){
+      //alert("hi");
+        //여기서부터
+        $.ajax({
+          method: "POST",
+          url: "/kakao/send_msg",
+          data: {content: $("#chat_content").val(), user_id: <%= current_user.id %>},
+          success: function(){
+              //var txt = $("#chat_content").val(); //내용 변수에 담기
+              //$("#chat_list").append("<li class='list-group-item'>"+ txt + "</li>"); //리스트에 추가하기
+              $("#chat_content").val(' ');//전송 완료시 공백
+              $('#byteInfo').text('0');
+              $("#chat_content").focus();//마우스 포커스 
+              $("#chat_content").attr("placeholder", "무슨 생각을 하고 계신가요?").val("").focus().blur();
+              $("#chat_content").focus();//마우스 포커스
+            }
+        })
+        //여기까지      
+      });//게시글 달기
+  
+   //댓글
+    var pusher2 = new Pusher('0f22bffddc41a8a18d1c', {
+      encrypted: true //암호화 자동화
+    });
+    var channel2 = pusher.subscribe('test_channel2');
+    channel2.bind('my_event2', function(data) { 
+        var txt3 = 
+        "<li class='list-group-item'>" +
+                data.school+"&nbsp;"+data.writer+ 
+                "<br>" +   
+                "<span style='font-size: 18px;'>"+data.content+"&nbsp;</span>" + 
+                "<span style='color: #b3b3b3;'>-&nbsp;<%= distance_of_time_in_words_to_now(Time.current)%></span>" +                        
+                    "<form action='/kakao/comment_delete/"+data.id+" method='GET'>" + 
+                        "<input type='hidden' value='"+data.id+"'>" + 
+                        "<button type='submit' class='btn btn-danger btn-xs'>삭제</button>" + 
+                    "</form>" + 
+        "</li>";
+        
+        $("#comment_list"+data.post_id).append(txt3); //리스트에 추가하기
+    });
+    //Pusher['survey-channel'].trigger('data-changed', { :text => "Busy creating new Call" } )
+      
+      //댓글달기
+    $(document).on("click",".submit_comment",function(){
+    //alert("hi");
+      var post_id = this.value; //내가 누른 바로 그 녀석
+      var comment_content = $("#comment_content" + post_id).val(); 
+        //여기서부터
+        $.ajax({
+          method: "POST",
+          url: "/kakao/send_comment",
+          data: {content: comment_content, user_id: <%= current_user.id %>,
+                             post_id: post_id},
+          success: function(){
+              //var txt = $("#chat_content").val(); //내용 변수에 담기
+              //$("#chat_list").append("<li class='list-group-item'>"+ txt + "</li>"); //리스트에 추가하기
+              $("#comment_content" + post_id).val(' ');//전송 완료시 공백
+              $("#comment_content" + post_id).focus();//마우스 포커스 
+              $("#comment_content" + post_id).attr("placeholder", "댓글을 입력하세요...").val("").focus().blur();
+              $("#comment_content" + post_id).focus();//마우스 포커스
+            }
+        })
+        //여기까지      
+      });      
+      
+      
+      
+      
+    });
+    
+    // function loadlink(){
+    //     $('.post_created_at').load('/kakao/index',function () {
+    //          $(this).unwrap();
+    //     });
+    // }
+    
+    // loadlink(); // This will run on page load
+    // setInterval(function(){
+    //     loadlink() // this will run after every 5 seconds
+    // }, 60000);
+</script>        
